@@ -22,26 +22,27 @@ class Neuron:
         self.bias = bias
         self.costFunc = costFunc
 
-    def feedforward(self, inputs):
+    def feedForward(self, inputs):
         dotWeights = np.dot(self.weights, inputs)
         addBias = dotWeights + self.bias
-        return self.costFunc(addBias)
+        result = self.costFunc(addBias)
+        return result
 
     def debug(self, inputs, Wcount):
         dotWeights = np.dot(self.weights, inputs)
         addBias = dotWeights + self.bias
         accWXI = 0
-        print("--- Weights Dot Product ---")
+        print("-"*15 + "> Weights Dot Product")
         for index, i in enumerate(self.weights):
-            print("W%d" % (index + 1 + Wcount), ": w-> ", "%.2f" % i, " * i->",
-                  "%.2f" % inputs[index], " = ", "%.2f" % inputs[index] * i, " + ",
-                  accWXI, " = ", "%.2f" % (accWXI + inputs[index] * i))
+            print("W%d" % (index + 1 + Wcount) + ": w-> " + "%.2f" % i + " * i->" +
+                  "%.2f" % inputs[index], " = " + "%.2f" % inputs[index] * i + " + " +
+                  str(accWXI) + " = " + "%.2f" % (accWXI + inputs[index] * i))
             accWXI += inputs[index] * i
-        print("--- Bias Addition ---")
-        print("%.2f" % dotWeights, " + ", self.bias, " = ", "%.2f" % addBias)
-        print("--- Apply ",self.costFunc.__name__," Cost Function ---")
-        print(self.costFunc.__name__,
-              "(", "%.5f" % addBias, ") = ", "%.5f" % self.costFunc(addBias))
+        print("-"*15 + "> Bias Addition")
+        print("%.2f" % dotWeights + " + " + str(self.bias) + " = " + "%.2f" % addBias)
+        print("-"*15 + "> Apply " + self.costFunc.__name__ + " Cost Function")
+        print(self.costFunc.__name__ +
+              "(" + "%.5f" % addBias + ") = " + "%.5f" % self.costFunc(addBias))
 
 # # w1 = 0, w2 = 1
 # weights = np.array([0, 1])
@@ -52,7 +53,7 @@ class Neuron:
 
 # x1 = 2, x2 = 3
 # x = np.array([2, 3])
-# print(n.feedforward(x))
+# print(n.feedForward(x))
 
 class NeuralNetwork:
     '''
@@ -71,38 +72,44 @@ class NeuralNetwork:
         self.h2 = Neuron(weights, bias, sigmoid)
         self.o1 = Neuron(weights, bias, sigmoid)
     
-    def feedforward(self, x):
-        out_h1 = self.h1.feedforward(x)
-        out_h2 = self.h2.feedforward(x)
-        out_o1 = self.o1.feedforward(np.array([out_h1, out_h2]))
+    def feedForward(self, x):
+        out_h1 = self.h1.feedForward(x)
+        out_h2 = self.h2.feedForward(x)
+        out_o1 = self.o1.feedForward(np.array([out_h1, out_h2]))
         # Debug - Ini
         self.debug(x) if DebugNNtwrk else None
         # Debug - End
         return out_o1
 
     def debug(self, x):
-        out_h1 = self.h1.feedforward(x)
-        out_h2 = self.h2.feedforward(x)
-        out_o1 = self.o1.feedforward(np.array([out_h1, out_h2]))
+        out_h1 = self.h1.feedForward(x)
+        out_h2 = self.h2.feedForward(x)
+        out_o1 = self.o1.feedForward(np.array([out_h1, out_h2]))
+        
         Wcount = 0
-        print("@@@ h1 - INI @@@") if DebugNeuron else None
+        print("@"*15 +"> h1 - INI @" + "@"*15) if DebugNeuron else None
         self.h1.debug(x, Wcount) if DebugNeuron else None
-        print("@@@ h1 val:", "%.5f" % out_h1, " @@@") if DebugNNtwrk else None
-        print("@@@ h1 - END @@@") if DebugNeuron else None
-        print("@@@ h2 - INI @@@") if DebugNeuron else None
+        print("@"*15 + "> h1 val:" + "%.5f" % out_h1) if DebugNNtwrk else None
+        print("@"*15 + "> h1 - END @" + "@"*15) if DebugNeuron else None
+        print("*"*60) if DebugNeuron else None
+        
         Wcount += len(self.h1.weights)
+        print("@"*15 + "> h2 - INI @" + "@"*15) if DebugNeuron else None
         self.h2.debug(x, Wcount) if DebugNeuron else None
-        print("@@@ h2 val:", "%.5f" % out_h2, " @@@") if DebugNNtwrk else None
-        print("@@@ h2 - END @@@") if DebugNeuron else None
-        print("@@@ o1 - INI @@@") if DebugNeuron else None
+        print("@"*15 + "> h2 val:", "%.5f" % out_h2) if DebugNNtwrk else None
+        print("@"*15 + "> h2 - END @" + "@"*15) if DebugNeuron else None
+        print("*"*60) if DebugNeuron else None
+        
         Wcount += len(self.h2.weights)
+        print("@"*15 + "> o1 - INI @" + "@"*15) if DebugNeuron else None
         self.o1.debug(x, Wcount) if DebugNeuron else None
-        print("@@@ o1 val:", "%.5f" % out_o1, " @@@") if DebugNNtwrk else None
-        print("@@@ o1 - END @@@") if DebugNeuron else None
+        print("@"*15 + "> o1 val:" + "%.5f" % out_o1) if DebugNNtwrk else None
+        print("@"*15 + "> o1 - END @" + "@"*15) if DebugNeuron else None
+        print("*"*60) if DebugNeuron else None
 
 network = NeuralNetwork()
 x = np.array([2, 3])
-print(network.feedforward(x))
+print(network.feedForward(x))
 
 # y_test = np.array([1,0,0,1])
 # y_pred = np.array([0,0,0,0])
